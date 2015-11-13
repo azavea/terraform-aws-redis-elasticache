@@ -3,7 +3,6 @@
 #
 
 resource "aws_security_group" "redis" {
-  name = "cache-security-group"
   vpc_id = "${var.vpc_id}"
 
   ingress {
@@ -30,7 +29,7 @@ resource "aws_security_group" "redis" {
 #
 
 resource "aws_elasticache_cluster" "redis" {
-  cluster_id = "cache"
+  cluster_id = "${var.cache_name}"
   engine = "redis"
   engine_version = "${var.engine_version}"
   maintenance_window = "${var.maintenance_window}"
@@ -47,7 +46,7 @@ resource "aws_elasticache_cluster" "redis" {
 }
 
 resource "aws_elasticache_subnet_group" "default" {
-  name = "cache-subnet-group"
+  name = "${var.cache_name}-subnet-group"
   description = "Private subnets for the ElastiCache instances"
   subnet_ids = ["${split(",", var.private_subnet_ids)}"]
 }

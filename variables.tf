@@ -1,6 +1,7 @@
 variable "vpc_id" { }
 variable "vpc_cidr_block" { }
 
+variable "cache_name" { }
 variable "engine_version" {
   default = "2.8.22"
 }
