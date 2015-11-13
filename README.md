@@ -11,6 +11,7 @@ module "redis_elasticache" {
   vpc_id = "vpc-20f74844"
   vpc_cidr_block = "10.0.0.0/16"
 
+  cache_name = "cache"
   engine_version = "2.8.22"
   instance_type = "cache.t2.micro"
   maintenance_window = "sun:05:00-sun:06:00"
@@ -25,6 +26,7 @@ module "redis_elasticache" {
 
 - `vpc_id` - ID of VPC meant to house the cache
 - `vpc_cidr_block` - CIDR block of VPC
+- `cache_name` - Name used as ElastiCache cluster ID
 - `engine_version` - Cache engine version (default: `2.8.22`)
 - `instance_type` - Instance type for cache instance (default: `cache.t2.micro`)
 - `maintenance_window` - 60 minute time window to reserve for maintenance
