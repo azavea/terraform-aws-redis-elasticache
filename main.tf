@@ -56,7 +56,7 @@ resource "aws_elasticache_subnet_group" "default" {
 #
 
 resource "aws_cloudwatch_metric_alarm" "cpu" {
-  alarm_name          = "alarmCacheClusterCPUUtilization"
+  alarm_name          = "alarmCacheClusterCPUUtilization-${var.cache_name}"
   alarm_description   = "Cache cluster CPU utilization"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = "1"
@@ -74,7 +74,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "memory_free" {
-  alarm_name          = "alarmCacheClusterFreeableMemory"
+  alarm_name          = "alarmCacheClusterFreeableMemory-${var.cache_name}"
   alarm_description   = "Cache cluster freeable memory"
   comparison_operator = "LessThanThreshold"
   evaluation_periods  = "1"
