@@ -36,6 +36,7 @@ module "redis_elasticache" {
 
 ## Outputs
 
+- `cache_security_group_id` - Security group ID of the cache cluster
 - `hostname` - Public DNS name of cache node
 - `port` - Port of cache instance
 - `endpoint` - Public DNS name and port separated by a `:`
