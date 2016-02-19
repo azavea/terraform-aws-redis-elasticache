@@ -1,8 +1,15 @@
+## 1.0.0
+
+- Break backward compatibility by removing the default security group rules
+  that open `6379` to the VPC CIDR range. Module consumers and add their own
+  rules via the `security_group_rule` resource.
+- Add `cache_security_group_id` as a module output.
+
 ## 0.3.0
 
 - Add cache name to alarm names so multiple instances do not conflict within
   the same AWS account.
-- Apply hclfmt.
+- Apply `hclfmt`.
 
 ## 0.2.0
 
