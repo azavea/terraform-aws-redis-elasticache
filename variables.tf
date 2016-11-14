@@ -1,9 +1,6 @@
 variable "vpc_id" {
 }
 
-variable "vpc_cidr_block" {
-}
-
 variable "cache_name" {
 }
 
@@ -21,7 +18,12 @@ variable "maintenance_window" {
 }
 
 variable "private_subnet_ids" {
+  type = "list"
 }
 
-variable "alarm_actions" {
+variable "alarm_action" {
+}
+
+variable "security_group_ids" {
+  type = "list"
 }

@@ -1,16 +1,4 @@
 #
-# Security group resources
-#
-
-resource "aws_security_group" "redis" {
-  vpc_id = "${var.vpc_id}"
-
-  tags {
-    Name = "sgCacheCluster"
-  }
-}
-
-#
 # ElastiCache resources
 #
 
@@ -24,23 +12,22 @@ resource "aws_elasticache_cluster" "redis" {
   parameter_group_name = "default.redis2.8"
   port                 = "6379"
   subnet_group_name    = "${aws_elasticache_subnet_group.default.name}"
-  security_group_ids   = ["${aws_security_group.redis.id}"]
+  security_group_ids   = "${var.security_group_ids}"
 
   tags {
-    Name = "CacheCluster"
+    Name = "${var.cache_name}"
   }
 }
 
 resource "aws_elasticache_subnet_group" "default" {
   name        = "${var.cache_name}-subnet-group"
   description = "Private subnets for the ElastiCache instances"
-  subnet_ids  = ["${split(",", var.private_subnet_ids)}"]
+  subnet_ids  = "${var.private_subnet_ids}"
 }
 
 #
 # CloudWatch resources
 #
-
 resource "aws_cloudwatch_metric_alarm" "cpu" {
   alarm_name          = "alarmCacheClusterCPUUtilization-${var.cache_name}"
   alarm_description   = "Cache cluster CPU utilization"
@@ -53,10 +40,12 @@ resource "aws_cloudwatch_metric_alarm" "cpu" {
   threshold           = "75"
 
   dimensions {
-    CacheClusterId = "${aws_elasticache_cluster.redis.id}"
+    CacheClusterName = "${var.cache_name}"
   }
 
-  alarm_actions = ["${split(",", var.alarm_actions)}"]
+  # for some reason trying to pass a list here causes the error `  * aws_cloudwatch_metric_alarm.cpu: alarm_actions: should be a list` in terraform 0.7.5
+  # passing lists elsewhere works fine
+  alarm_actions = ["${var.alarm_action}"]
 }
 
 resource "aws_cloudwatch_metric_alarm" "memory_free" {
@@ -73,8 +62,10 @@ resource "aws_cloudwatch_metric_alarm" "memory_free" {
   threshold = "10000000"
 
   dimensions {
-    CacheClusterId = "${aws_elasticache_cluster.redis.id}"
+    CacheClusterName = "${var.cache_name}"
   }
 
-  alarm_actions = ["${split(",", var.alarm_actions)}"]
+  # for some reason trying to pass a list here causes the error `  * aws_cloudwatch_metric_alarm.cpu: alarm_actions: should be a list` in terraform 0.7.5
+  # passing lists elsewhere works fine
+  alarm_actions = ["${var.alarm_action}"]
 }
