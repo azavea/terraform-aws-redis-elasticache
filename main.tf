@@ -1,56 +1,69 @@
 #
-# ElastiCache resources
+# Security group resources
 #
-
-resource "aws_elasticache_cluster" "redis" {
-  cluster_id           = "${var.cache_name}"
-  engine               = "redis"
-  engine_version       = "${var.engine_version}"
-  maintenance_window   = "${var.maintenance_window}"
-  node_type            = "${var.instance_type}"
-  num_cache_nodes      = "1"
-  parameter_group_name = "default.redis2.8"
-  port                 = "6379"
-  subnet_group_name    = "${aws_elasticache_subnet_group.default.name}"
-  security_group_ids   = "${var.security_group_ids}"
+resource "aws_security_group" "redis" {
+  vpc_id = "${var.vpc_id}"
 
   tags {
-    Name = "${var.cache_name}"
+    Name        = "sgCacheCluster"
+    Project     = "${var.project}"
+    Environment = "${var.environment}"
   }
 }
 
-resource "aws_elasticache_subnet_group" "default" {
-  name        = "${var.cache_name}-subnet-group"
-  description = "Private subnets for the ElastiCache instances"
-  subnet_ids  = "${var.private_subnet_ids}"
+#
+# ElastiCache resources
+#
+resource "aws_elasticache_replication_group" "redis" {
+  replication_group_id          = "${lower(var.cache_identifier)}"
+  replication_group_description = "Replication group for Redis"
+  automatic_failover_enabled    = "${var.automatic_failover_enabled}"
+  number_cache_clusters         = "${var.desired_clusters}"
+  node_type                     = "${var.instance_type}"
+  engine_version                = "${var.engine_version}"
+  parameter_group_name          = "${var.parameter_group}"
+  subnet_group_name             = "${var.subnet_group}"
+  security_group_ids            = ["${aws_security_group.redis.id}"]
+  maintenance_window            = "${var.maintenance_window}"
+  notification_topic_arn        = "${var.notification_topic_arn}"
+  port                          = "6379"
+
+  tags {
+    Name        = "CacheReplicationGroup"
+    Project     = "${var.project}"
+    Environment = "${var.environment}"
+  }
 }
 
 #
 # CloudWatch resources
 #
-resource "aws_cloudwatch_metric_alarm" "cpu" {
-  alarm_name          = "alarmCacheClusterCPUUtilization-${var.cache_name}"
-  alarm_description   = "Cache cluster CPU utilization"
+resource "aws_cloudwatch_metric_alarm" "cache_cpu" {
+  count = "${var.desired_clusters}"
+
+  alarm_name          = "alarm${var.environment}CacheCluster00${count.index + 1}CPUUtilization"
+  alarm_description   = "Redis cluster CPU utilization"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = "1"
   metric_name         = "CPUUtilization"
   namespace           = "AWS/ElastiCache"
   period              = "300"
   statistic           = "Average"
-  threshold           = "75"
+
+  threshold = "${var.alarm_cpu_threshold}"
 
   dimensions {
-    CacheClusterName = "${var.cache_name}"
+    CacheClusterId = "${aws_elasticache_replication_group.redis.id}-00${count.index + 1}"
   }
 
-  # for some reason trying to pass a list here causes the error `  * aws_cloudwatch_metric_alarm.cpu: alarm_actions: should be a list` in terraform 0.7.5
-  # passing lists elsewhere works fine
-  alarm_actions = ["${var.alarm_action}"]
+  alarm_actions = ["${var.alarm_actions}"]
 }
 
-resource "aws_cloudwatch_metric_alarm" "memory_free" {
-  alarm_name          = "alarmCacheClusterFreeableMemory-${var.cache_name}"
-  alarm_description   = "Cache cluster freeable memory"
+resource "aws_cloudwatch_metric_alarm" "cache_memory" {
+  count = "${var.desired_clusters}"
+
+  alarm_name          = "alarm${var.environment}CacheCluster00${count.index + 1}FreeableMemory"
+  alarm_description   = "Redis cluster freeable memory"
   comparison_operator = "LessThanThreshold"
   evaluation_periods  = "1"
   metric_name         = "FreeableMemory"
@@ -58,14 +71,11 @@ resource "aws_cloudwatch_metric_alarm" "memory_free" {
   period              = "60"
   statistic           = "Average"
 
-  # 10MB in bytes
-  threshold = "10000000"
+  threshold = "${var.alarm_memory_threshold}"
 
   dimensions {
-    CacheClusterName = "${var.cache_name}"
+    CacheClusterId = "${aws_elasticache_replication_group.redis.id}-00${count.index + 1}"
   }
 
-  # for some reason trying to pass a list here causes the error `  * aws_cloudwatch_metric_alarm.cpu: alarm_actions: should be a list` in terraform 0.7.5
-  # passing lists elsewhere works fine
-  alarm_actions = ["${var.alarm_action}"]
+  alarm_actions = ["${var.alarm_actions}"]
 }
