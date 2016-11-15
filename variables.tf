@@ -1,29 +1,50 @@
-variable "vpc_id" {
+variable "project" {
+  default = "Unknown"
 }
 
-variable "cache_name" {
+variable "environment" {
+  default = "Unknown"
 }
 
-variable "engine_version" {
-  default = "2.8.22"
+variable "vpc_id" {}
+
+variable "cache_identifier" {}
+
+variable "parameter_group" {
+  default = "redis3.2"
+}
+
+variable "subnet_group" {}
+
+variable "maintenance_window" {}
+
+variable "desired_clusters" {
+  default = "1"
 }
 
 variable "instance_type" {
   default = "cache.t2.micro"
 }
 
-variable "maintenance_window" {
-  # SUN 01:00AM-02:00AM ET
-  default = "sun:05:00-sun:06:00"
+variable "engine_version" {
+  default = "3.2.4"
 }
 
-variable "private_subnet_ids" {
-  type = "list"
+variable "automatic_failover_enabled" {
+  default = false
 }
 
-variable "alarm_action" {
+variable "notification_topic_arn" {}
+
+variable "alarm_cpu_threshold" {
+  default = "75"
 }
 
-variable "security_group_ids" {
+variable "alarm_memory_threshold" {
+  # 10MB
+  default = "10000000"
+}
+
+variable "alarm_actions" {
   type = "list"
 }
