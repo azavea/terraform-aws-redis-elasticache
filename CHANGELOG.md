@@ -1,3 +1,8 @@
+## 2.0.0
+
+- Break backward compatibility again by swapping out the `aws_elasticache_cluster` resource with `aws_elasticache_replication_group`.
+- Remove `aws_elasticache_subnet_group`.
+
 ## 1.0.0
 
 - Break backward compatibility by removing the default security group rules
