@@ -1,15 +1,28 @@
 #
 # Security group resources
 #
+
 resource "aws_security_group" "redis" {
-  vpc_id = "${var.vpc_id}"
+  vpc_id  = "${var.vpc_id}"
+  name    = "${var.project}-${var.environment}"
 
   tags {
-    Name        = "sgCacheCluster"
+    Name        = "${var.project}-${var.environment}-security-group"
     Project     = "${var.project}"
     Environment = "${var.environment}"
   }
 }
+
+resource "aws_security_group_rule" "allow_all" {
+  type            = "ingress"
+  from_port       = 6379
+  to_port         = 6379
+  protocol        = "tcp"
+  cidr_blocks     = ["0.0.0.0/0"]
+
+  security_group_id = "${aws_security_group.redis.id}"
+}
+
 
 #
 # ElastiCache resources
@@ -29,7 +42,7 @@ resource "aws_elasticache_replication_group" "redis" {
   port                          = "6379"
 
   tags {
-    Name        = "CacheReplicationGroup"
+    Name        = "${var.project}-${var.environment}-replication-group"
     Project     = "${var.project}"
     Environment = "${var.environment}"
   }
