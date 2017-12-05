@@ -11,7 +11,7 @@ variable "vpc_id" {}
 variable "cache_identifier" {}
 
 variable "parameter_group" {
-  default = "redis3.2"
+  default = "default.redis3.2"
 }
 
 variable "subnet_group" {}
