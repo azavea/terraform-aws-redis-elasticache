@@ -1,3 +1,7 @@
+## 2.0.1
+
+- Fix default value for ElastiCache parameter group.
+
 ## 2.0.0
 
 - Break backward compatibility again by swapping out the `aws_elasticache_cluster` resource with `aws_elasticache_replication_group`.
