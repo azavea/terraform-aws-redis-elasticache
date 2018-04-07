@@ -3,7 +3,12 @@
 #
 resource "aws_security_group" "redis" {
   vpc_id = "${var.vpc_id}"
-
+  ingress {
+      from_port = "6739"
+      to_port = "6739"
+      protocol = "tcp"
+      security_groups = ["${var.security_groups}"]
+    }
   tags {
     Name        = "sgCacheCluster"
     Project     = "${var.project}"
