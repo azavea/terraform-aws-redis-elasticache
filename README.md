@@ -1,5 +1,7 @@
 # terraform-aws-redis-elasticache
 
+[![CircleCI](https://circleci.com/gh/azavea/terraform-aws-redis-elasticache.svg?style=svg)](https://circleci.com/gh/azavea/terraform-aws-redis-elasticache)
+
 A Terraform module to create an Amazon Web Services (AWS) Redis ElastiCache cluster.
 
 ## Usage
