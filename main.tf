@@ -11,6 +11,13 @@ resource "aws_security_group" "redis" {
   }
 }
 
+resource "aws_elasticache_subnet_group" "default" {
+  count  = "${var.enabled == "true" ? 1 : 0}"
+  name        = "subnet-group-${lower(var.cache_identifier)}"
+  description = "Private subnets for the ElastiCache instances:  ${lower(var.cache_identifier)}"
+  subnet_ids  = ["${data.aws_subnet_ids.private.ids}"]
+}
+
 #
 # ElastiCache resources
 #
@@ -22,8 +29,8 @@ resource "aws_elasticache_replication_group" "redis" {
   node_type                     = "${var.instance_type}"
   engine_version                = "${var.engine_version}"
   parameter_group_name          = "${var.parameter_group}"
-  subnet_group_name             = "${var.subnet_group}"
-  security_group_ids            = ["${aws_security_group.redis.id}"]
+  subnet_group_name             = "${var.subnet_group == "" ? aws_elasticache_subnet_group.default.name : var.subnet_group }"
+  security_group_ids            = ["${aws_security_group.redis.id},${data.aws_security_group.default.id}"]
   maintenance_window            = "${var.maintenance_window}"
   notification_topic_arn        = "${var.notification_topic_arn}"
   port                          = "6379"
