@@ -5,10 +5,11 @@ resource "aws_security_group" "redis" {
   vpc_id = "${var.vpc_id}"
 
   tags {
-    Name        = "sgCacheCluster"
+    Name        = "${var.project}-${var.environment}-sgCacheCluster"
     Project     = "${var.project}"
     Environment = "${var.environment}"
-  }
+    owner       = "${var.owner}"
+    }
 }
 
 #
@@ -29,7 +30,7 @@ resource "aws_elasticache_replication_group" "redis" {
   port                          = "6379"
 
   tags {
-    Name        = "CacheReplicationGroup"
+    Name        = "${var.project}-${var.environment}-CacheReplicationGroup"
     Project     = "${var.project}"
     Environment = "${var.environment}"
   }
@@ -42,7 +43,7 @@ resource "aws_cloudwatch_metric_alarm" "cache_cpu" {
   count = "${var.desired_clusters}"
 
   alarm_name          = "alarm${var.project}${var.environment}CacheCluster00${count.index + 1}CPUUtilization"
-  alarm_description   = "Redis cluster CPU utilization"
+  alarm_description   = "${var.project} ${var.environment} Redis cluster CPU utilization"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = "1"
   metric_name         = "CPUUtilization"
@@ -53,7 +54,7 @@ resource "aws_cloudwatch_metric_alarm" "cache_cpu" {
   threshold = "${var.alarm_cpu_threshold}"
 
   dimensions {
-    CacheClusterId = "${aws_elasticache_replication_group.redis.id}-00${count.index + 1}"
+    CacheClusterId = "${var.environment}-${aws_elasticache_replication_group.redis.id}-00${count.index + 1}"
   }
 
   alarm_actions = ["${var.alarm_actions}"]
@@ -63,7 +64,7 @@ resource "aws_cloudwatch_metric_alarm" "cache_memory" {
   count = "${var.desired_clusters}"
 
   alarm_name          = "alarm${var.project}${var.environment}CacheCluster00${count.index + 1}FreeableMemory"
-  alarm_description   = "Redis cluster freeable memory"
+  alarm_description   = "${var.project} ${var.environment} Redis cluster freeable memory"
   comparison_operator = "LessThanThreshold"
   evaluation_periods  = "1"
   metric_name         = "FreeableMemory"
@@ -74,7 +75,7 @@ resource "aws_cloudwatch_metric_alarm" "cache_memory" {
   threshold = "${var.alarm_memory_threshold}"
 
   dimensions {
-    CacheClusterId = "${aws_elasticache_replication_group.redis.id}-00${count.index + 1}"
+    CacheClusterId = "${var.environment}-${aws_elasticache_replication_group.redis.id}-00${count.index + 1}"
   }
 
   alarm_actions = ["${var.alarm_actions}"]

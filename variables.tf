@@ -34,6 +34,8 @@ variable "automatic_failover_enabled" {
   default = false
 }
 
+variable "owner" {}
+
 variable "notification_topic_arn" {}
 
 variable "alarm_cpu_threshold" {
