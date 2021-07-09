@@ -34,11 +34,7 @@ variable "automatic_failover_enabled" {
   default = false
 }
 
-variable "tags" {
-  description = "common tags associated with resource"
-  type        = map(string)
-  default     = {}
-}
+variable "owner" {}
 
 variable "notification_topic_arn" {}
 
