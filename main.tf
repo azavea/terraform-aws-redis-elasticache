@@ -4,18 +4,12 @@
 resource "aws_security_group" "redis" {
   vpc_id = "${var.vpc_id}"
 
-  tags = merge(
-    {
-      "Name"        = "${var.project}-${var.environment}-sgCacheCluster"
-    },
-    {
-      "Project"     = "${var.project}"
-    },
-    {
-      "Environment" = "${var.environment}"
-    },	  
-    var.tags,
-  )
+  tags {
+    Name        = "sgCacheCluster"
+    Project     = "${var.project}"
+    Environment = "${var.environment}"
+    owner       = "${var.owner}"
+    }
 }
 
 #
