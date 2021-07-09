@@ -34,6 +34,12 @@ variable "automatic_failover_enabled" {
   default = false
 }
 
+variable "tags" {
+  description = "common tags associated with resource"
+  type        = map(string)
+  default     = {}
+}
+
 variable "notification_topic_arn" {}
 
 variable "alarm_cpu_threshold" {
