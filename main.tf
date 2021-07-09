@@ -6,10 +6,14 @@ resource "aws_security_group" "redis" {
 
   tags = merge(
     {
-      "Name"        = "${var.project}-${var.environment}-sgCacheCluster",
-	    "Project"     = "${var.project}",
-      "Environment" = "${var.environment}"
+      "Name"        = "${var.project}-${var.environment}-sgCacheCluster"
     },
+    {
+      "Project"     = "${var.project}"
+    },
+    {
+      "Environment" = "${var.environment}"
+    },	  
     var.tags,
   )
 }
