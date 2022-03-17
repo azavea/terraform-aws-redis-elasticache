@@ -6,17 +6,21 @@ variable "environment" {
   default = "Unknown"
 }
 
-variable "vpc_id" {}
+variable "vpc_id" {
+}
 
-variable "cache_identifier" {}
+variable "cache_identifier" {
+}
 
 variable "parameter_group" {
   default = "default.redis3.2"
 }
 
-variable "subnet_group" {}
+variable "subnet_group" {
+}
 
-variable "maintenance_window" {}
+variable "maintenance_window" {
+}
 
 variable "desired_clusters" {
   default = "1"
@@ -34,7 +38,8 @@ variable "automatic_failover_enabled" {
   default = false
 }
 
-variable "notification_topic_arn" {}
+variable "notification_topic_arn" {
+}
 
 variable "alarm_cpu_threshold" {
   default = "75"
@@ -46,5 +51,6 @@ variable "alarm_memory_threshold" {
 }
 
 variable "alarm_actions" {
-  type = "list"
+  type = list(string)
 }
+
