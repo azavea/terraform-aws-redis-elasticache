@@ -16,7 +16,7 @@ resource "aws_security_group" "redis" {
 #
 resource "aws_elasticache_replication_group" "redis" {
   replication_group_id          = lower(var.cache_identifier)
-  replication_group_description = "Replication group for Redis"
+  description                   = "Replication group for Redis"
   automatic_failover_enabled    = var.automatic_failover_enabled
   number_cache_clusters         = var.desired_clusters
   node_type                     = var.instance_type
@@ -79,4 +79,3 @@ resource "aws_cloudwatch_metric_alarm" "cache_memory" {
 
   alarm_actions = var.alarm_actions
 }
-
